@@ -59,4 +59,30 @@ public class UserController {
         }
     }
 
+    @GetMapping("/check-verification-code-expiry")
+    public ResponseEntity<Map<String, Object>> checkVerificationCodeExpiry(@RequestParam String email) {
+        boolean isExpired = userService.isVerificationCodeExpired(email);
+        Map<String, Object> response = new HashMap<>();
+        response.put("isExpired", isExpired);
+        response.put("message", isExpired ? "Verification code has expired." : "Verification code is valid.");
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/generate-verification-code")
+    public ResponseEntity<Map<String, Object>> generateVerificationCode(@RequestParam String email) {
+        boolean isGenerated = userService.generateVerificationCode(email);
+        Map<String, Object> response = new HashMap<>();
+        response.put("isGenerated", isGenerated);
+        response.put("message", isGenerated ? "Verification code generated successfully." : "Failed to generate verification code.");
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify-code")
+    public ResponseEntity<Map<String, Object>> verifyCode(@RequestParam String email, @RequestParam String code) {
+        boolean isVerified = userService.verifyCode(email, code);
+        Map<String, Object> response = new HashMap<>();
+        response.put("isVerified", isVerified);
+        response.put("message", isVerified ? "Verification successful." : "Verification failed. Invalid code or code expired.");
+        return ResponseEntity.ok(response);
+    }
 }
