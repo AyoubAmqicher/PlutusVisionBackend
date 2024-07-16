@@ -31,6 +31,9 @@ public class User {
     @OneToOne
     private EmailVerification emailVerification;
 
+    @OneToOne
+    private PasswordResetToken passwordResetToken;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
