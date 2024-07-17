@@ -1,5 +1,6 @@
 package org.sid.plutusvision.controllers;
 
+import org.sid.plutusvision.dtos.ChangePasswordDto;
 import org.sid.plutusvision.dtos.UserDto;
 import org.sid.plutusvision.entities.User;
 import org.sid.plutusvision.services.impl.UserServiceImpl;
@@ -101,5 +102,20 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Password reset token has been sent to your email.");
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Map<String, Object>> changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
+        boolean isPasswordChanged = userServiceImpl.changePassword(changePasswordDto.getToken(),
+                changePasswordDto.getNewPassword());
+        Map<String, Object> response = new HashMap<>();
+        response.put("hasChanged", isPasswordChanged);
+        if (isPasswordChanged) {
+            response.put("message", "Password has been reset successfully.");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Invalid token or token has expired.");
+            return ResponseEntity.ok(response);
+        }
     }
 }

@@ -15,8 +15,11 @@ public class PasswordResetTokenImpl implements PasswordResetTokenService {
         this.passwordResetTokenRepository = passwordResetTokenRepository;
     }
 
+    @Override
     public boolean isTokenValid(String token){
         PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token).orElse(null);
-        return passwordResetToken != null && passwordResetToken.getExpiryDate().isAfter(LocalDateTime.now());
+        return passwordResetToken != null && passwordResetToken.getExpiryDate() != null && passwordResetToken.getExpiryDate().isAfter(LocalDateTime.now());
     }
+
+
 }

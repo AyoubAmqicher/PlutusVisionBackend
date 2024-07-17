@@ -27,4 +27,6 @@ public interface UserService {
     boolean isPasswordResetTokenValid(String email);
 
     void createOrUpdatePasswordResetToken(String email);
+
+    boolean changePassword(String token, String newPassword);
 }

@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             PasswordResetToken resetToken = user.getPasswordResetToken();
-            if (resetToken != null && resetToken.getExpiryDate().isAfter(LocalDateTime.now())) {
+            if (resetToken != null && resetToken.getExpiryDate() != null && resetToken.getExpiryDate().isAfter(LocalDateTime.now())) {
                 return true;
             }
         }
@@ -179,6 +179,20 @@ public class UserServiceImpl implements UserService {
 
         String resetLink = "http://localhost:4200/reset-password?token=" + token.getToken();
         emailService.sendTokenEmail(user.getEmail(), "Password Reset", resetLink, user.getFirstName());
+    }
+
+    @Override
+    public boolean changePassword(String token, String newPassword) {
+        Optional<User> userOptional = userRepository.findByPasswordResetToken_Token(token);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setPassword(passwordEncoder.encode(newPassword));
+            user.getPasswordResetToken().setExpiryDate(null); // Invalidate the token
+            user.getPasswordResetToken().setToken(null);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 
     private String generateRandomToken() {
