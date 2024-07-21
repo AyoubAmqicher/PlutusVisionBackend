@@ -21,6 +21,7 @@ public class User {
     private String password;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Double balance;
 
     @Enumerated(EnumType.STRING)
     private Role role;

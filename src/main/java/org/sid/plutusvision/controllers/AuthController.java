@@ -9,13 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -28,12 +23,15 @@ import java.util.stream.Collectors;
 public class AuthController {
     private final JwtEncoder encoder;
     private final UserServiceImpl userServiceImpl;
+    private final JwtDecoder jwtDecoder;
+
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    public AuthController(JwtEncoder encoder, UserServiceImpl userServiceImpl) {
+    public AuthController(JwtEncoder encoder, UserServiceImpl userServiceImpl, JwtDecoder jwtDecoder) {
         this.encoder = encoder;
         this.userServiceImpl = userServiceImpl;
+        this.jwtDecoder = jwtDecoder;
     }
 
     @PostMapping("")
@@ -51,6 +49,7 @@ public class AuthController {
             String firstName = user.getFirstName();
             String lastName = user.getLastName();
             String email = user.getEmail();
+            Long id = user.getId();
             JwtClaimsSet claims = JwtClaimsSet.builder()
                     .issuer("self")
                     .issuedAt(now)
@@ -60,6 +59,7 @@ public class AuthController {
                     .claim("firstName", firstName)
                     .claim("lastName", lastName)
                     .claim("email", email)
+                    .claim("id", id)
                     .build();
             String token = this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
@@ -72,6 +72,21 @@ public class AuthController {
         } catch (Exception e) {
             logger.error("Authentication failed: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @GetMapping("/validate-token")
+    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String token) {
+        // Remove the "Bearer " prefix if it exists
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        try {
+            Jwt decodedToken = jwtDecoder.decode(token);
+            return ResponseEntity.ok("Token is valid");
+        } catch (JwtException e) {
+            return ResponseEntity.status(401).body("Invalid token: " + e.getMessage());
         }
     }
 }
