@@ -1,8 +1,9 @@
 package org.sid.plutusvision.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.sid.plutusvision.enums.AccountStatus;
+import lombok.NoArgsConstructor;
 import org.sid.plutusvision.enums.TransactionStatus;
 import org.sid.plutusvision.enums.TransactionType;
 
@@ -10,6 +11,8 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

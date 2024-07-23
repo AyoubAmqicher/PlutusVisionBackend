@@ -4,3 +4,4 @@ public enum TransactionStatus {
     CONFIRMED,
     COMING,
 }
+
