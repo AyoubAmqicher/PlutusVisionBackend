@@ -150,4 +150,21 @@ public class TransactionServiceImpl implements TransactionService {
             return false;
         }
     }
+
+    @Override
+    public Double calculateCurrentPotentialBalance(Long clientId) {
+        Double currentBalance = userRepository.findById(clientId).map(User::getBalance).orElse(0.0);
+
+        List<Transaction> transactions = transactionRepository.findByUserIdAndStatusAndDateLessThanEqual(clientId, TransactionStatus.COMING, LocalDate.now());
+
+        for (Transaction transaction : transactions) {
+            if (transaction.getType() == TransactionType.EXPENSE) {
+                currentBalance -= transaction.getAmount();
+            } else if (transaction.getType() == TransactionType.INCOME) {
+                currentBalance += transaction.getAmount();
+            }
+        }
+
+        return currentBalance;
+    }
 }

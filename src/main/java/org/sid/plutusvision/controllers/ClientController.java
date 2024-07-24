@@ -94,4 +94,11 @@ public class ClientController {
         }
     }
 
+    @GetMapping("/{id}/current-potential-balance")
+    public ResponseEntity<Map<String, Object>> getCurrentPotentialBalance(@PathVariable Long id) {
+        Double currentPotentialBalance = transactionService.calculateCurrentPotentialBalance(id);
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentPotentialBalance", currentPotentialBalance);
+        return ResponseEntity.ok(response);
+    }
 }

@@ -13,5 +13,7 @@ public interface TransactionService {
     List<StableTransactionDTO> getStableTransactionsByUserId(Long id);
     boolean updateStableTransaction(Long id, TransactionDTO transactionDTO);
     boolean deleteTransaction(Long transactionId);
+    Double calculateCurrentPotentialBalance(Long clientId);
+
 
 }
