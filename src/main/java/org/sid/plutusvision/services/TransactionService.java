@@ -10,6 +10,8 @@ import java.util.List;
 public interface TransactionService {
     boolean saveTransaction(TransactionDTO transactionDTO);
     Double calculatePotentialBalance(Long clientId, LocalDate futureDate);
-
     List<StableTransactionDTO> getStableTransactionsByUserId(Long id);
+    boolean updateStableTransaction(Long id, TransactionDTO transactionDTO);
+    boolean deleteTransaction(Long transactionId);
+
 }

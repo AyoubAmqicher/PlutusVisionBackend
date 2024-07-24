@@ -113,4 +113,41 @@ public class TransactionServiceImpl implements TransactionService {
                 .map(transactionMapper::toStableTransactionDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public boolean updateStableTransaction(Long id, TransactionDTO transactionDTO) {
+        try {
+            Transaction existingTransaction = transactionRepository.findById(id).orElseThrow(() -> new RuntimeException("Transaction not found"));
+            Category category = categoryRepository.findById(transactionDTO.getCategoryId()).orElseThrow(() -> new RuntimeException("Category not found"));
+
+            // Update fields
+            existingTransaction.setAmount(transactionDTO.getAmount());
+            existingTransaction.setDate(transactionDTO.getDate());
+            existingTransaction.setCategory(category);
+            existingTransaction.setType(TransactionType.valueOf(transactionDTO.getType()));
+
+            // Save the updated transaction
+            transactionRepository.save(existingTransaction);
+
+            return true;
+        } catch (Exception e) {
+            // Log the exception here if needed
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteTransaction(Long transactionId) {
+        try {
+            if (transactionRepository.existsById(transactionId)) {
+                transactionRepository.deleteById(transactionId);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            // Log the exception if needed
+            return false;
+        }
+    }
 }

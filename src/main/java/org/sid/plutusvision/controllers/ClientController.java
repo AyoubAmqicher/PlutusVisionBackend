@@ -73,4 +73,25 @@ public class ClientController {
         List<StableTransactionDTO> stableTransactions = transactionService.getStableTransactionsByUserId(id);
         return ResponseEntity.ok(stableTransactions);
     }
+
+    @PutMapping("/stable/transactions/{id}")
+    public ResponseEntity<Void> updateStableTransaction(@PathVariable Long id, @RequestBody TransactionDTO transactionDTO) {
+        boolean isUpdated = transactionService.updateStableTransaction(id, transactionDTO);
+        if (isUpdated) {
+            return new ResponseEntity<>(HttpStatus.OK); // 200 OK
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 Not Found
+        }
+    }
+
+    @DeleteMapping("/transactions/{id}")
+    public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
+        boolean isDeleted = transactionService.deleteTransaction(id);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 Not Found
+        }
+    }
+
 }
