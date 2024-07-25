@@ -49,6 +49,15 @@ public class ClientController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}/username")
+    public ResponseEntity<Map<String, Object>>  getUsername(@PathVariable Long id) {
+        String username = clientService.getUsernameById(id);
+
+        Map<String,Object> response = new HashMap<>();
+        response.put("username",username);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/transactions/save")
     public ResponseEntity<Void> saveTransaction(@RequestBody TransactionDTO transactionDTO) {
         boolean isSaved = transactionService.saveTransaction(transactionDTO);
@@ -106,5 +115,16 @@ public class ClientController {
         Map<String, Object> response = new HashMap<>();
         response.put("currentPotentialBalance", currentPotentialBalance);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/balance")
+    public ResponseEntity<Void> updateBalance(@PathVariable Long id, @RequestBody Map<String, Double> balanceRequest) {
+        Double newBalance = balanceRequest.get("balance");
+        boolean isUpdated = clientService.updateBalance(id, newBalance);
+        if (isUpdated) {
+            return new ResponseEntity<>(HttpStatus.OK); // 200 OK
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 Not Found
+        }
     }
 }
