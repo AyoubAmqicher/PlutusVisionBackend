@@ -74,6 +74,12 @@ public class ClientController {
         return ResponseEntity.ok(stableTransactions);
     }
 
+    @GetMapping("/{id}/confirmed-transactions")
+    public ResponseEntity<List<StableTransactionDTO>> getConfirmedTransactions(@PathVariable Long id) {
+        List<StableTransactionDTO> stableTransactions = transactionService.getConfirmedTransactionsByUserId(id);
+        return ResponseEntity.ok(stableTransactions);
+    }
+
     @PutMapping("/stable/transactions/{id}")
     public ResponseEntity<Void> updateStableTransaction(@PathVariable Long id, @RequestBody TransactionDTO transactionDTO) {
         boolean isUpdated = transactionService.updateStableTransaction(id, transactionDTO);

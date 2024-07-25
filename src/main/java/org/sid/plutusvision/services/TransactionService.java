@@ -11,6 +11,9 @@ public interface TransactionService {
     boolean saveTransaction(TransactionDTO transactionDTO);
     Double calculatePotentialBalance(Long clientId, LocalDate futureDate);
     List<StableTransactionDTO> getStableTransactionsByUserId(Long id);
+
+    List<StableTransactionDTO> getConfirmedTransactionsByUserId(Long userId);
+
     boolean updateStableTransaction(Long id, TransactionDTO transactionDTO);
     boolean deleteTransaction(Long transactionId);
     Double calculateCurrentPotentialBalance(Long clientId);

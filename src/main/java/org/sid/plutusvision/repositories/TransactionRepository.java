@@ -10,4 +10,7 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     List<Transaction> findByUserIdAndStatusAndDateLessThanEqual(Long clientId, TransactionStatus transactionStatus, LocalDate date);
     List<Transaction> findByUserIdAndIsStableTrue(Long userId);
+
+    List<Transaction> findByUserIdAndStatus(Long userId,TransactionStatus status);
+
 }

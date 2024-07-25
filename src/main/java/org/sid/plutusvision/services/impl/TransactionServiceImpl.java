@@ -115,6 +115,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public List<StableTransactionDTO> getConfirmedTransactionsByUserId(Long userId) {
+        List<Transaction> transactions = transactionRepository.findByUserIdAndStatus(userId,TransactionStatus.CONFIRMED);
+        return transactions.stream()
+                .map(transactionMapper::toStableTransactionDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public boolean updateStableTransaction(Long id, TransactionDTO transactionDTO) {
         try {
             Transaction existingTransaction = transactionRepository.findById(id).orElseThrow(() -> new RuntimeException("Transaction not found"));
