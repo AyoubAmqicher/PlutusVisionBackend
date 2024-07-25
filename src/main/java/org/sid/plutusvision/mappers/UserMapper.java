@@ -1,6 +1,7 @@
 package org.sid.plutusvision.mappers;
 
 import org.sid.plutusvision.dtos.UserDto;
+import org.sid.plutusvision.dtos.UserResponseDto;
 import org.sid.plutusvision.entities.User;
 import org.sid.plutusvision.enums.Role;
 import org.springframework.stereotype.Component;
@@ -21,17 +22,15 @@ public class UserMapper {
         return user;
     }
 
-    public UserDto toDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setUsername(user.getUsername());
-        userDto.setFirstName(user.getFirstName());
-        userDto.setLastName(user.getLastName());
-        userDto.setEmail(user.getEmail());
-        userDto.setPassword(user.getPassword());
-        if (user.getRole() != null) {
-            userDto.setRole(user.getRole().name());
-        }
-        userDto.setAccountStatus(user.getAccountStatus());
-        return userDto;
+    public UserResponseDto toResponseDto(User user) {
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setUsername(user.getUsername());
+        userResponseDto.setFirstName(user.getFirstName());
+        userResponseDto.setLastName(user.getLastName());
+        userResponseDto.setEmail(user.getEmail());
+        userResponseDto.setRole(user.getRole().name());
+        userResponseDto.setCreatedAt(user.getCreatedAt());
+        userResponseDto.setUpdatedAt(user.getUpdatedAt());
+        return userResponseDto;
     }
 }

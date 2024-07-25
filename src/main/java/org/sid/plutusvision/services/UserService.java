@@ -29,4 +29,5 @@ public interface UserService {
     void createOrUpdatePasswordResetToken(String email);
 
     boolean changePassword(String token, String newPassword);
+    Optional<User> findById(Long id);
 }

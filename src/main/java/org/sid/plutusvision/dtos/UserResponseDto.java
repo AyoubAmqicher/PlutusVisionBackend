@@ -1,15 +1,16 @@
 package org.sid.plutusvision.dtos;
 
 import lombok.Data;
-import org.sid.plutusvision.enums.AccountStatus;
+
+import java.time.LocalDateTime;
 
 @Data
-public class UserDto {
+public class UserResponseDto {
     private String username;
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
     private String role;
-    private AccountStatus accountStatus;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

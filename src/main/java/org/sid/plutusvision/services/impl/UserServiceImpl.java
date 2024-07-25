@@ -195,6 +195,11 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
     private String generateRandomToken() {
         return UUID.randomUUID().toString();
     }
