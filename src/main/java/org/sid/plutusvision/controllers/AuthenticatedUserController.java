@@ -1,6 +1,7 @@
 package org.sid.plutusvision.controllers;
 
 import jakarta.annotation.security.RolesAllowed;
+import org.sid.plutusvision.dtos.UpdateUserRequestDto;
 import org.sid.plutusvision.dtos.UserResponseDto;
 import org.sid.plutusvision.mappers.UserMapper;
 import org.sid.plutusvision.services.UserService;
@@ -23,6 +24,20 @@ public class AuthenticatedUserController {
     @GetMapping("/user/{id}")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
         return userService.findById(id)
+                .map(user -> ResponseEntity.ok(userMapper.toResponseDto(user)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/user/{id}")
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequestDto updateUserRequestDto) {
+        return userService.updateUser(id, updateUserRequestDto)
+                .map(user -> ResponseEntity.ok(userMapper.toResponseDto(user)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/user/{id}/change-email")
+    public ResponseEntity<UserResponseDto> changeEmail(@PathVariable Long id, @RequestParam String newEmail) {
+        return userService.changeEmail(id, newEmail)
                 .map(user -> ResponseEntity.ok(userMapper.toResponseDto(user)))
                 .orElse(ResponseEntity.notFound().build());
     }

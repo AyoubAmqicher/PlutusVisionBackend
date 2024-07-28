@@ -1,5 +1,6 @@
 package org.sid.plutusvision.services.impl;
 
+import org.sid.plutusvision.dtos.UpdateUserRequestDto;
 import org.sid.plutusvision.dtos.UserDto;
 import org.sid.plutusvision.entities.EmailVerification;
 import org.sid.plutusvision.entities.PasswordResetToken;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -202,5 +204,45 @@ public class UserServiceImpl implements UserService {
 
     private String generateRandomToken() {
         return UUID.randomUUID().toString();
+    }
+
+    @Override
+    public Optional<User> updateUser(Long id, UpdateUserRequestDto updateUserRequestDto) {
+        return userRepository.findById(id).map(user -> {
+            if (updateUserRequestDto.getUsername() != null){
+                user.setUsername(updateUserRequestDto.getUsername());
+            }
+            if (updateUserRequestDto.getFirstName() != null){
+                user.setFirstName(updateUserRequestDto.getFirstName());
+            }
+            if (updateUserRequestDto.getLastName() != null){
+                user.setLastName(updateUserRequestDto.getLastName());
+            }
+            userRepository.save(user);
+            return user;
+        });
+    }
+
+    @Override
+    public Optional<User> changeEmail(Long id, String newEmail) {
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setEmail(newEmail);
+                    user.setAccountStatus(AccountStatus.PENDING_VERIFICATION);
+                    EmailVerification emailVerification = user.getEmailVerification();
+                    if (emailVerification == null){
+                        emailVerification = new EmailVerification();
+                    }
+                    emailVerification.setConfirmationCode(generateRandomVerificationCode());
+                    emailVerification.setExpiryDate(LocalDateTime.now().plusMinutes(15));
+                    user.setEmailVerification(emailVerification);
+
+                    emailVerificationRepository.save(emailVerification);
+
+                    String emailText = emailVerification.getConfirmationCode();
+                    emailService.sendVerificationEmail(user.getEmail(), "Email Verification", emailText, user.getFirstName());
+
+                    return userRepository.save(user);
+                });
     }
 }

@@ -1,5 +1,6 @@
 package org.sid.plutusvision.services;
 
+import org.sid.plutusvision.dtos.UpdateUserRequestDto;
 import org.sid.plutusvision.dtos.UserDto;
 import org.sid.plutusvision.entities.User;
 
@@ -30,4 +31,8 @@ public interface UserService {
 
     boolean changePassword(String token, String newPassword);
     Optional<User> findById(Long id);
+
+    Optional<User> updateUser(Long id, UpdateUserRequestDto updateUserRequestDto);
+
+    Optional<User> changeEmail(Long id, String newEmail);
 }
