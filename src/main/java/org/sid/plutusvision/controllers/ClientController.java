@@ -1,10 +1,12 @@
 package org.sid.plutusvision.controllers;
 
 import jakarta.annotation.security.RolesAllowed;
+import org.sid.plutusvision.dtos.BudgetDTO;
 import org.sid.plutusvision.dtos.StableTransactionDTO;
 import org.sid.plutusvision.dtos.TransactionDTO;
 import org.sid.plutusvision.entities.Transaction;
 import org.sid.plutusvision.enums.Role;
+import org.sid.plutusvision.services.BudgetService;
 import org.sid.plutusvision.services.ClientService;
 import org.sid.plutusvision.services.TransactionService;
 import org.sid.plutusvision.services.impl.ClientServiceImpl;
@@ -24,11 +26,14 @@ import java.util.Map;
 public class ClientController {
     private final ClientService clientService;
     private final TransactionService transactionService;
+    private final BudgetService budgetService;
 
 
-    public ClientController(ClientServiceImpl clientService, TransactionService transactionService) {
+
+    public ClientController(ClientServiceImpl clientService, TransactionService transactionService, BudgetService budgetService) {
         this.clientService = clientService;
         this.transactionService = transactionService;
+        this.budgetService = budgetService;
     }
 
     @GetMapping("/{id}/full-name")
@@ -126,5 +131,11 @@ public class ClientController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 Not Found
         }
+    }
+
+    @GetMapping("/{id}/budgets")
+    public ResponseEntity<List<BudgetDTO>> getUserBudgets(@PathVariable Long id) {
+        List<BudgetDTO> budgets = budgetService.getUserBudgets(id);
+        return ResponseEntity.ok(budgets);
     }
 }

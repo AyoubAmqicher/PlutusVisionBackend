@@ -1,5 +1,6 @@
 package org.sid.plutusvision.services.impl;
 
+import org.sid.plutusvision.dtos.ChangePasswordRequestDto;
 import org.sid.plutusvision.dtos.UpdateUserRequestDto;
 import org.sid.plutusvision.dtos.UserDto;
 import org.sid.plutusvision.entities.EmailVerification;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -245,4 +245,17 @@ public class UserServiceImpl implements UserService {
                     return userRepository.save(user);
                 });
     }
+
+    @Override
+    public boolean changePassword(Long id, ChangePasswordRequestDto changePasswordRequestDto) {
+        return userRepository.findById(id).map(user -> {
+            if (passwordEncoder.matches(changePasswordRequestDto.getOldPassword(), user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(changePasswordRequestDto.getNewPassword()));
+                userRepository.save(user);
+                return true;
+            }
+            return false;
+        }).orElse(false);
+    }
+
 }
