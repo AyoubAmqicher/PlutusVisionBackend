@@ -27,6 +27,8 @@ public class Budget {
     @ManyToOne
     private Category category;
 
+
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDate.now();

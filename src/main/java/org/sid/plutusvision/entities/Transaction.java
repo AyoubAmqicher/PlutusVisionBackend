@@ -23,6 +23,7 @@ public class Transaction {
     private Boolean isStable;
     private Boolean concernABudget;
 
+
     @Enumerated(EnumType.STRING)
     private TransactionType type;
 
@@ -34,4 +35,7 @@ public class Transaction {
 
     @ManyToOne
     private Category category;
+
+    @ManyToOne
+    private Budget budget;
 }

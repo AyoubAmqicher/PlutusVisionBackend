@@ -1,36 +1,44 @@
 package org.sid.plutusvision.services.impl;
 
 import org.sid.plutusvision.dtos.StableTransactionDTO;
+import org.sid.plutusvision.dtos.TransactionConcernBudgetDTO;
 import org.sid.plutusvision.dtos.TransactionDTO;
+import org.sid.plutusvision.entities.Budget;
 import org.sid.plutusvision.entities.Category;
 import org.sid.plutusvision.entities.Transaction;
 import org.sid.plutusvision.entities.User;
 import org.sid.plutusvision.enums.TransactionStatus;
 import org.sid.plutusvision.enums.TransactionType;
 import org.sid.plutusvision.mappers.TransactionMapper;
+import org.sid.plutusvision.repositories.BudgetRepository;
 import org.sid.plutusvision.repositories.CategoryRepository;
 import org.sid.plutusvision.repositories.TransactionRepository;
 import org.sid.plutusvision.repositories.UserRepository;
 import org.sid.plutusvision.services.TransactionService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final TransactionMapper transactionMapper;
+    private final BudgetRepository budgetRepository;
 
 
-    public TransactionServiceImpl(TransactionRepository transactionRepository, UserRepository userRepository, CategoryRepository categoryRepository, TransactionMapper transactionMapper) {
+
+    public TransactionServiceImpl(TransactionRepository transactionRepository, UserRepository userRepository, CategoryRepository categoryRepository, TransactionMapper transactionMapper, BudgetRepository budgetRepository) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.transactionMapper = transactionMapper;
+        this.budgetRepository = budgetRepository;
     }
 
     @Override
@@ -174,5 +182,27 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         return currentBalance;
+    }
+
+    @Override
+    public List<TransactionConcernBudgetDTO> getTransactionsByBudgetId(Long budgetId) {
+        List<Transaction> transactions = transactionRepository.findByBudgetId(budgetId);
+        return transactions.stream()
+                .map(transactionMapper::toTransactionConcernBudgetDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void cancelTransaction(Long transactionId) {
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+
+        Budget budget = transaction.getBudget();
+        if (budget != null) {
+            budget.setAllocatedAmount(budget.getAllocatedAmount() - transaction.getAmount());
+            budgetRepository.save(budget);
+        }
+
+        transactionRepository.delete(transaction);
     }
 }
