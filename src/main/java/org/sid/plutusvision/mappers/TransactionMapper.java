@@ -2,6 +2,7 @@ package org.sid.plutusvision.mappers;
 
 import org.sid.plutusvision.dtos.StableTransactionDTO;
 import org.sid.plutusvision.dtos.TransactionConcernBudgetDTO;
+import org.sid.plutusvision.dtos.TransactionConcernBudgetRequestDTO;
 import org.sid.plutusvision.dtos.TransactionDTO;
 import org.sid.plutusvision.entities.Category;
 import org.sid.plutusvision.entities.Transaction;
@@ -55,5 +56,18 @@ public class TransactionMapper {
         dto.setStatus(transaction.getStatus().name());
 
         return dto;
+    }
+
+    public Transaction toTransactionConcernBudgetRequestEntity(TransactionConcernBudgetRequestDTO transactionConcernBudgetRequestDTO){
+
+        if (transactionConcernBudgetRequestDTO == null) {
+            return null;
+        }
+
+        Transaction transaction = new Transaction();
+        transaction.setAmount(transactionConcernBudgetRequestDTO.getAmount());
+        transaction.setDate(transactionConcernBudgetRequestDTO.getDate());
+
+        return transaction;
     }
 }

@@ -2,6 +2,7 @@ package org.sid.plutusvision.services.impl;
 
 import org.sid.plutusvision.dtos.StableTransactionDTO;
 import org.sid.plutusvision.dtos.TransactionConcernBudgetDTO;
+import org.sid.plutusvision.dtos.TransactionConcernBudgetRequestDTO;
 import org.sid.plutusvision.dtos.TransactionDTO;
 import org.sid.plutusvision.entities.Budget;
 import org.sid.plutusvision.entities.Category;
@@ -204,5 +205,36 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         transactionRepository.delete(transaction);
+    }
+
+    @Override
+    public boolean saveTransactionForABudget(TransactionConcernBudgetRequestDTO transactionConcernBudgetRequestDTO, Long budgetId) {
+        try {
+            Budget budget = budgetRepository.findById(budgetId).orElseThrow(() -> new RuntimeException("User not found"));
+
+            Transaction transaction = transactionMapper.toTransactionConcernBudgetRequestEntity(transactionConcernBudgetRequestDTO);
+
+            LocalDate today = LocalDate.now();
+
+            transaction.setType(TransactionType.EXPENSE);
+            transaction.setIsStable(false);
+
+            if (transactionConcernBudgetRequestDTO.getDate().isEqual(today)) {
+                transaction.setStatus(TransactionStatus.CONFIRMED);
+            } else if (transactionConcernBudgetRequestDTO.getDate().isAfter(today)) {
+                transaction.setStatus(TransactionStatus.COMING);
+            }
+
+            budget.setAllocatedAmount(budget.getAllocatedAmount()+transaction.getAmount());
+            transaction.setBudget(budget);
+            transaction.setConcernABudget(true);
+
+            transactionRepository.save(transaction);
+
+            return true;
+        } catch (Exception e) {
+            // Log the exception here if needed
+            return false;
+        }
     }
 }

@@ -1,7 +1,9 @@
 package org.sid.plutusvision.mappers;
 
 import org.sid.plutusvision.dtos.BudgetDTO;
+import org.sid.plutusvision.dtos.BudgetRequestDTO;
 import org.sid.plutusvision.entities.Budget;
+import org.sid.plutusvision.enums.BudgetPeriod;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,5 +23,16 @@ public class BudgetMapper {
         budgetDTO.setCategory(budget.getCategory());
 
         return budgetDTO;
+    }
+
+    public Budget toEntity(BudgetRequestDTO budgetRequestDTO) {
+        if (budgetRequestDTO == null) {
+            return null;
+        }
+        Budget budget = new Budget();
+        budget.setName(budgetRequestDTO.getName());
+        budget.setPeriod(BudgetPeriod.valueOf(budgetRequestDTO.getPeriod()));
+        budget.setTotalAmount(budgetRequestDTO.getAmount());
+        return budget;
     }
 }

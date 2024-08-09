@@ -33,4 +33,18 @@ public class Budget {
     protected void onCreate() {
         createdAt = LocalDate.now();
     }
+
+    public LocalDate getFinishDate() {
+        LocalDate date = this.createdAt;
+        switch (this.period) {
+            case WEEK:
+                return date.plusWeeks(1);
+            case MONTH:
+                return date.plusMonths(1);
+            case YEAR:
+                return date.plusYears(1);
+            default:
+                throw new IllegalArgumentException("Unknown BudgetPeriod: " + this.period);
+        }
+    }
 }
