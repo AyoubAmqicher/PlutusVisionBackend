@@ -1,9 +1,6 @@
 package org.sid.plutusvision.services;
 
-import org.sid.plutusvision.dtos.StableTransactionDTO;
-import org.sid.plutusvision.dtos.TransactionConcernBudgetDTO;
-import org.sid.plutusvision.dtos.TransactionConcernBudgetRequestDTO;
-import org.sid.plutusvision.dtos.TransactionDTO;
+import org.sid.plutusvision.dtos.*;
 import org.sid.plutusvision.entities.Transaction;
 
 import java.time.LocalDate;
@@ -24,4 +21,16 @@ public interface TransactionService {
     void cancelTransaction(Long transactionId);
 
     boolean saveTransactionForABudget(TransactionConcernBudgetRequestDTO transactionDTO, Long budgetId);
+
+    List<IncomeTransactionDTO> getComingIncomeTransactions(Long userId);
+
+    List<IncomeTransactionDTO> getComingIncomeFutureTransactions(Long userId);
+
+    boolean confirmIncome(Long id);
+
+    List<IncomeTransactionDTO> getComingExpenseTransactions(Long userId);
+
+    List<IncomeTransactionDTO> getComingExpenseFutureTransactions(Long userId);
+
+    boolean confirmExpense(Long id);
 }

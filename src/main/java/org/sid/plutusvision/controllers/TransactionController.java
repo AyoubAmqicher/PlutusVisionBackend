@@ -1,6 +1,7 @@
 package org.sid.plutusvision.controllers;
 
 import jakarta.annotation.security.RolesAllowed;
+import org.sid.plutusvision.dtos.IncomeTransactionDTO;
 import org.sid.plutusvision.dtos.TransactionConcernBudgetDTO;
 import org.sid.plutusvision.dtos.TransactionConcernBudgetRequestDTO;
 import org.sid.plutusvision.dtos.TransactionDTO;
@@ -38,6 +39,50 @@ public class TransactionController {
             @RequestParam Long budgetId) {
         boolean isSaved = transactionService.saveTransactionForABudget(transactionDTO,budgetId);
         if (isSaved) {
+            return new ResponseEntity<>(HttpStatus.OK); // 200 OK
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+        }
+    }
+
+    @GetMapping("/coming-income")
+    public ResponseEntity<List<IncomeTransactionDTO>> getComingIncomeTransactions(@RequestParam Long userId) {
+        List<IncomeTransactionDTO> transactions = transactionService.getComingIncomeTransactions(userId);
+        return ResponseEntity.ok(transactions);
+    }
+
+    @GetMapping("/coming-future-income")
+    public ResponseEntity<List<IncomeTransactionDTO>> getComingFutureIncomeTransactions(@RequestParam Long userId) {
+        List<IncomeTransactionDTO> transactions = transactionService.getComingIncomeFutureTransactions(userId);
+        return ResponseEntity.ok(transactions);
+    }
+
+    @PutMapping("confirm-income")
+    public ResponseEntity<Void> confirmIncome(@RequestParam Long id){
+        boolean isConfirmed = transactionService.confirmIncome(id);
+        if (isConfirmed) {
+            return new ResponseEntity<>(HttpStatus.OK); // 200 OK
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+        }
+    }
+
+    @GetMapping("/coming-expense")
+    public ResponseEntity<List<IncomeTransactionDTO>> getComingExpenseTransactions(@RequestParam Long userId) {
+        List<IncomeTransactionDTO> transactions = transactionService.getComingExpenseTransactions(userId);
+        return ResponseEntity.ok(transactions);
+    }
+
+    @GetMapping("/coming-future-expense")
+    public ResponseEntity<List<IncomeTransactionDTO>> getComingFutureExpenseTransactions(@RequestParam Long userId) {
+        List<IncomeTransactionDTO> transactions = transactionService.getComingExpenseFutureTransactions(userId);
+        return ResponseEntity.ok(transactions);
+    }
+
+    @PutMapping("confirm-expense")
+    public ResponseEntity<Void> confirmExpense(@RequestParam Long id){
+        boolean isConfirmed = transactionService.confirmExpense(id);
+        if (isConfirmed) {
             return new ResponseEntity<>(HttpStatus.OK); // 200 OK
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error

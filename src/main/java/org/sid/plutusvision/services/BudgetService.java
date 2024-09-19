@@ -13,4 +13,8 @@ public interface BudgetService {
     List<BudgetDTO> findAvailableBudgets(Double amount, LocalDate date, Long categoryId);
 
     boolean saveBudget(BudgetRequestDTO budgetRequestDTO,Long userId);
+
+    boolean deleteBudget(Long budgetId);
+
+    boolean hasUnconfirmedTransactions(Long budgetId);
 }

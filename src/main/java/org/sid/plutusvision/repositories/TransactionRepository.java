@@ -2,6 +2,7 @@ package org.sid.plutusvision.repositories;
 
 import org.sid.plutusvision.entities.Transaction;
 import org.sid.plutusvision.enums.TransactionStatus;
+import org.sid.plutusvision.enums.TransactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -14,4 +15,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByUserIdAndStatus(Long userId,TransactionStatus status);
 
     List<Transaction> findByBudgetId(Long budgetId);
+    boolean existsByBudgetIdAndStatus(Long budgetId, TransactionStatus status);
+    List<Transaction> findByUserIdAndTypeAndStatusAndDateLessThanEqual(Long userId, TransactionType type, TransactionStatus status, LocalDate date);
+    List<Transaction> findByUserIdAndTypeAndStatusAndDateAfter(Long userId, TransactionType type, TransactionStatus status, LocalDate date);
 }

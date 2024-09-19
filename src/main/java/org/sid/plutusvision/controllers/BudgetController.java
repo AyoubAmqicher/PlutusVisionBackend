@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -41,5 +43,25 @@ public class BudgetController {
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
         }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
+        boolean isDeleted = budgetService.deleteBudget(id);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 Not Found
+        }
+    }
+
+    @GetMapping("/is-budget-have-unconfirmed-transaction")
+    public ResponseEntity<Map<String, Object>> isBudgetHaveUnconfirmedTransaction(@RequestParam Long id) {
+        boolean hasUnconfirmedTransactions = budgetService.hasUnconfirmedTransactions(id);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("response", hasUnconfirmedTransactions);
+
+        return ResponseEntity.ok(response);
     }
 }

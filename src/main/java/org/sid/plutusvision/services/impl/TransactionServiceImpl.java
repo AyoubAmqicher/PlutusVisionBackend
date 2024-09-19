@@ -1,9 +1,6 @@
 package org.sid.plutusvision.services.impl;
 
-import org.sid.plutusvision.dtos.StableTransactionDTO;
-import org.sid.plutusvision.dtos.TransactionConcernBudgetDTO;
-import org.sid.plutusvision.dtos.TransactionConcernBudgetRequestDTO;
-import org.sid.plutusvision.dtos.TransactionDTO;
+import org.sid.plutusvision.dtos.*;
 import org.sid.plutusvision.entities.Budget;
 import org.sid.plutusvision.entities.Category;
 import org.sid.plutusvision.entities.Transaction;
@@ -236,5 +233,99 @@ public class TransactionServiceImpl implements TransactionService {
             // Log the exception here if needed
             return false;
         }
+    }
+
+    @Override
+    public List<IncomeTransactionDTO> getComingIncomeTransactions(Long userId) {
+        LocalDate today = LocalDate.now();
+
+        List<Transaction> transactions = transactionRepository.findByUserIdAndTypeAndStatusAndDateLessThanEqual(userId, TransactionType.INCOME, TransactionStatus.COMING, today);
+
+        return transactions.stream().map(transaction -> {
+            IncomeTransactionDTO dto = new IncomeTransactionDTO();
+            dto.setId(transaction.getId());
+            dto.setAmount(transaction.getAmount());
+            dto.setDate(transaction.getDate());
+            dto.setCategory(transaction.getCategory());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<IncomeTransactionDTO> getComingIncomeFutureTransactions(Long userId) {
+        LocalDate today = LocalDate.now();
+
+        List<Transaction> transactions = transactionRepository.findByUserIdAndTypeAndStatusAndDateAfter(userId, TransactionType.INCOME, TransactionStatus.COMING, today);
+
+        return transactions.stream().map(transaction -> {
+            IncomeTransactionDTO dto = new IncomeTransactionDTO();
+            dto.setId(transaction.getId());
+            dto.setAmount(transaction.getAmount());
+            dto.setDate(transaction.getDate());
+            dto.setCategory(transaction.getCategory());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean confirmIncome(Long id){
+        Transaction transaction = transactionRepository.findById(id).orElse(null);
+        if(transaction != null){
+            User user = transaction.getUser();
+            user.setBalance(user.getBalance()+transaction.getAmount());
+            transaction.setStatus(TransactionStatus.CONFIRMED);
+            userRepository.save(user);
+            transactionRepository.save(transaction);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public List<IncomeTransactionDTO> getComingExpenseTransactions(Long userId) {
+        LocalDate today = LocalDate.now();
+
+        List<Transaction> transactions = transactionRepository.findByUserIdAndTypeAndStatusAndDateLessThanEqual(userId, TransactionType.EXPENSE, TransactionStatus.COMING, today);
+
+        return transactions.stream().map(transaction -> {
+            IncomeTransactionDTO dto = new IncomeTransactionDTO();
+            dto.setId(transaction.getId());
+            dto.setAmount(transaction.getAmount());
+            dto.setDate(transaction.getDate());
+            dto.setCategory(transaction.getCategory());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<IncomeTransactionDTO> getComingExpenseFutureTransactions(Long userId) {
+        LocalDate today = LocalDate.now();
+
+        List<Transaction> transactions = transactionRepository.findByUserIdAndTypeAndStatusAndDateAfter(userId, TransactionType.EXPENSE, TransactionStatus.COMING, today);
+
+        return transactions.stream().map(transaction -> {
+            IncomeTransactionDTO dto = new IncomeTransactionDTO();
+            dto.setId(transaction.getId());
+            dto.setAmount(transaction.getAmount());
+            dto.setDate(transaction.getDate());
+            dto.setCategory(transaction.getCategory());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean confirmExpense(Long id){
+        Transaction transaction = transactionRepository.findById(id).orElse(null);
+        if(transaction != null){
+            User user = transaction.getUser();
+            user.setBalance(user.getBalance()-transaction.getAmount());
+            transaction.setStatus(TransactionStatus.CONFIRMED);
+            userRepository.save(user);
+            transactionRepository.save(transaction);
+            return true;
+        }
+
+        return false;
     }
 }
